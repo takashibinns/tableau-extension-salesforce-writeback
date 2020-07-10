@@ -1,0 +1,56 @@
+/************************************************/
+/*	CSS for Tableau Extension's popup dialog 	*/
+/************************************************/
+
+/*	Defaults 		*/
+body {
+	font: 12px "Benton Sans Book";
+}
+div.container{
+	padding:0;
+}
+
+/*	Top Title Bar 	*/
+.tableau-titlebar {
+	height: 30px;
+	background-color: rgb(245, 245, 245);
+	padding-top:7px;
+}
+.tableau-titlebar-label {
+	margin-left: 18px;
+}
+.tableau-titlebar-close-button {
+	float: right;
+	text-align: center;
+    width: 30px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/*	Main config UI 	*/
+.tableau-section-title{
+	font: 12px "Benton Sans Medium";
+	color: black;
+	opacity: 0.8;
+	padding-top: 18px;
+	padding-bottom: 18px;
+}
+.tableau-section-label{
+	float: left;
+	font-size: 10px;
+	color: black;
+	opacity: 0.56;
+	margin-right: 18px;
+	width: 100px;
+	padding-top:6px;
+}
+
+
+/*	Bottom save buttons 	*/
+.tableau-footer {
+	float: right;
+}
+
+.tableau-footer button {
+	margin-right: 12px;
+}
