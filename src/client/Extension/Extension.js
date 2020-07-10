@@ -183,7 +183,7 @@ class Extension extends React.Component {
         };
       }).catch((error) => {
         return {
-          'message': error,
+          'message': "Error: could not authenticate to Salesforce",
           'error': true,
           'details': {}
         };
@@ -228,10 +228,15 @@ class Extension extends React.Component {
 
       //  Load data from a tableau worksheet
       const rawData = await getDataFromTableau(settings.tableau.worksheet);
+      //  Check to make sure we found a worksheet with data
+      if (!rawData){
+        //  No worksheet with data
+        toast.error('No worksheet specified as the data source');
+        return false;
+      }
 
       //  Structure data for writeback, based on the field mappings
       const data = prepData(rawData, settings);
-      
       //  Check for an empty data set
       if (data.records.length===0) {
         //  No data to writeback

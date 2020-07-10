@@ -259,6 +259,7 @@ app.post('/api/salesforce/login', async (req, res) => {
 	//	Check to make sure a username & password were given
 	if (!data.username || !data.password){
 		res.send(buildResponse('Error: username & password required', true));
+		return null;
 	}
 
 	//	Define the login payload
