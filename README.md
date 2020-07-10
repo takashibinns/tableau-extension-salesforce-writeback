@@ -66,3 +66,6 @@ On the last tab, you need to specify the mapping between fields from your Tablea
 Now when you click on the save button from your dashboard, it should upload the data to your salesforce object and return a toast notification when the job is finished.
 
 ![finished screenshot](/screenshots/toast-success.png)
+
+## Known Limitations
+* This extension does not yet do any data type casting, meaning if your tableau field is a date but the salesforce object is a number you may run into a problem writing to that field.
