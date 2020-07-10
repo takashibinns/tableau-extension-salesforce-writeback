@@ -3,7 +3,7 @@ import { Button, Tabs, TextField, DropdownSelect, Checkbox, Stepper } from '@tab
 import Axios from 'axios';
 import { toast } from 'react-toastify';
 import './Config.css';
-import util from '.././Shared/Utility';
+import util from '../Shared/Utils';
 import Loading from '../Shared/Loading';
 
 // Declare this so our linter knows that tableau is a global object
