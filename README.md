@@ -3,6 +3,9 @@ This project is a Tableau Desktop Extension, which allows users to take data fro
 
 ![Example Dashboard Image](/screenshots/dashboard.png)
 
+## Architecture Diagram
+![Architecture](/screenshots/Architecture.png)
+
 ## Prerequisites: Connected App in Salesforce
 In order for this app to talk to salesforce, we need to authenticate through a connected app.  In order to create this, start by logging into Salesforce as an admin and goto the **Setup page**.  From here, navigate to the **App Manager** and click the button for creating a **New Connected App**.
 
