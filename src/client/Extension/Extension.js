@@ -97,6 +97,17 @@ class Extension extends React.Component {
 
     let thisComponent = this;
 
+    //  Figure out the version of the tableau extension API.
+    const versionSplit = tableau.extensions.environment.apiVersion.split('.');
+    const apiVersion = {
+      'major': versionSplit[0],
+      'minor': versionSplit[1],
+      'point': versionSplit[2]
+    }
+
+    //  Is the API Version >= 1.4.0
+    const apiIs14Plus = (apiVersion.major > 1) || (apiVersion.major == 1 && apiVersion.minor >= 4);
+
     /**************************************/
     /*  Initialize the Tableau extension  */
     /**************************************/
@@ -136,16 +147,39 @@ class Extension extends React.Component {
         "records":[]
       }
 
+      //  Function to lookup a column's index
+      const getColumn = (row, col) => {
+        return row.findIndex((c)=> {
+          return c.fieldName === col.tableau.fieldName;
+        });
+      }
+
       //  Figure out which salesforce fields we are writing to
       let dict = {}
+      let error = null;
       Object.keys(settings.salesforce.FieldMappings).forEach( (sfFieldName, index)=>{
         //  Pull the reference to this selection
         const sfField = settings.salesforce.FieldMappings[sfFieldName];
         //  Save to the fields array
         data.fields[index] = sfFieldName;
+        //  Figure out which column from the tableau worksheet, maps to this salesforce column
+        const tIndex = getColumn(tableauData.columns, sfField);
+        if (tIndex<0){
+          //  The fieldname from the extension config, was not found in the tableau worksheet
+          error = `Could not find the field "${sfField.tableau.fieldName}" in your worksheet, please re-configure the extension's mapping`;
+        } else {
+          //  Found the matching column name in the tableau worksheet
+          sfField.tableau.columnNumber = tIndex;
+        }
         //  Define which tableau column maps to this field
-        dict[index] = sfField.tableau;
+        dict[index] = sfField;
       })
+
+      //  Check for any errors during the field mapping process
+      if (error){
+        toast.error(error);
+        return null;
+      }
       
       //  Loop through each record in the dataset from Tableau
       tableauData.data.forEach( (row,index) => {
@@ -154,7 +188,10 @@ class Extension extends React.Component {
           //  Loop through the fields dictionary
           Object.keys(dict).forEach( (sfFieldIndex) => {
             //  Save the value from the tableau dataset, into the proper salesforce column
-            record[sfFieldIndex] = row[dict[sfFieldIndex].index].nativeValue;
+            //    First figure out which tableau column to pull
+            const index = dict[sfFieldIndex].tableau.columnNumber;
+            //    and make sure to safely handle api versions 1.3 or older
+            record[sfFieldIndex] = apiIs14Plus ? row[index].nativeValue : row[index].value;
           })
           //  Save the record
           data.records.push(record)
@@ -238,11 +275,14 @@ class Extension extends React.Component {
       //  Structure data for writeback, based on the field mappings
       const data = prepData(rawData, settings);
       //  Check for an empty data set
-      if (data.records.length===0) {
+      if (!data){
+        //  null returned, error was displayed already
+        return false;
+      } else if (data.records.length===0) {
         //  No data to writeback
         toast.info('No data in the worksheet, to write back');
-        return false
-      }
+        return false;
+      } 
 
       //  Get the access token for writing back to salesforce
       let credentials = {};
